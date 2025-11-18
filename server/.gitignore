@@ -1,0 +1,40 @@
+# Environment variables
+.env
+
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
+logs
+*.log
+logs/*
+
+# Build outputs
+dist/
+build/
+.temp/
+
+# IDE / system files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Cache
+.cache/
+.next/
+coverage/
+
+# React specific
+*.map
+
+# Local database dumps
+*.sql
+*.sqlite
+*.db
+
+# Output folders
+public/uploads/
