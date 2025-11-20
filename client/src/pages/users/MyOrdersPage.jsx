@@ -6,6 +6,7 @@ import { OrderForm } from '../../components/OrderForm';
 import { OrderDetails } from '../../components/OrderDetails';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
+import { authAPI } from '../../services/api';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,14 +36,22 @@ export function MyOrdersPage() {
   }
 
   useEffect(() => {
-    fetch("/api/session", { credentials: "include" })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.loggedIn) setUser(data.user);
-        
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    const fetchUser = async () => {
+      try {
+        const data = await authAPI.getSession();
+        if (data.loggedIn) {
+          setUser(data.user);
+          setLoading(false);
+        } else {
+          console.log("User not logged in");
+        }
+      } catch (err) {
+        console.error("Failed to fetch user", err);
+        setLoading(false)
+      }
+    };
+
+    fetchUser();
   }, []);
   
   useEffect(() => {
@@ -51,7 +60,7 @@ export function MyOrdersPage() {
 
   const loadOrders = async () => {
     try {
-      const data = await ordersAPI.getById(user.id);
+      const data = await ordersAPI.getByCustomerId(user.id);
       setOrders(data);
     } catch (error) {
       console.error('Error loading orders:', error);

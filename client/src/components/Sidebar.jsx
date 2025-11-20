@@ -46,12 +46,12 @@ export function Sidebar({ activeTab, setActiveTab, user }) {
         </ul>
       </nav>
 
-      <div className="p-4 border-t border-gray-200">
+      {/* <div className="p-4 border-t border-gray-200">
         <button className="w-full flex items-center cursor-pointer gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
           <Settings className="w-5 h-5" />
           <span>Settings</span>
         </button>
-      </div>
+      </div> */}
     </div>
   );
 }

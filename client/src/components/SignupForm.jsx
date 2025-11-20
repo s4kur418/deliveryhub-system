@@ -1,6 +1,7 @@
 import { Package, Mail, Lock, User } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { authAPI } from "../services/api";
 // Note: setDocumentTitle import and call removed to resolve path error
 
 function SignupForm() {
@@ -30,17 +31,9 @@ function SignupForm() {
         setSuccessMsg("");
 
         try {
-            const res = await fetch("/api/signup", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(values)
-            });
-
-            const data = await res.json();
+            const data = await authAPI.signup(values);
             
-            if (res.ok) {
+            if (data) {
                 setSuccessMsg("Registration successful! Redirecting to login..."); 
                 setTimeout(() => {
                     navigate("/") 

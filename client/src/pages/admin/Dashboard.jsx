@@ -123,8 +123,8 @@ export function Dashboard({ setActiveTab }) {
             className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left"
           >
             <Package className="w-6 h-6 text-blue-600 mb-2" />
-            <p className="font-medium">Create New Order</p>
-            <p className="text-sm text-gray-600">Add a new delivery order</p>
+            <p className="font-medium">Manage Orders</p>
+            <p className="text-sm text-gray-600">View and manage delivery orders</p>
           </button>
           <button 
             onClick={() => setActiveTab('drivers')}

@@ -1,6 +1,7 @@
 import { X, MapPin, Package, User, Truck, DollarSign, Calendar } from 'lucide-react';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
+import { useEffect } from 'react';
 
 export function OrderDetails({ order, onClose, onEdit }) {
   const getStatusColor = (status) => {
@@ -133,7 +134,9 @@ export function OrderDetails({ order, onClose, onEdit }) {
             <Button variant="outline" onClick={onClose}>
               Close
             </Button>
-            <Button onClick={onEdit}>Edit Order</Button>
+            {order?.status === "pending" && (
+              <Button onClick={onEdit}>Edit Order</Button>
+            )}
           </div>
         </div>
       </div>

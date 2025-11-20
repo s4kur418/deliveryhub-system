@@ -14,6 +14,46 @@ export const authAPI = {
       return { loggedIn: false }; // fallback
     }
   },
+
+  signup: async (data) => {
+    const response = await fetch(`${API_BASE_URL}/signup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error("Failed to sign up");
+    return response.json();
+  },
+
+  login: async (values) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(values),
+      });
+
+      const data = await response.json();
+      return { ok: response.ok, data };
+
+    } catch (err) {
+      return {
+        ok: false,
+        data: { message: "Server error. Please try again." },
+      };
+    }
+  },
+
+  logout: async (data) => {
+    const response = await fetch(`${API_BASE_URL}/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+    if (!response.ok) throw new Error("Failed to log out");
+    return response.json();
+  },
 };
 
 export const ordersAPI = {
@@ -23,8 +63,14 @@ export const ordersAPI = {
     return response.json();
   },
 
-  getById: async (id) => {
+  getByCustomerId: async (id) => {
     const response = await fetch(`${API_BASE_URL}/orders/${id}`, { credentials: "include" });
+    if (!response.ok) throw new Error("Failed to fetch order");
+    return response.json();
+  },
+
+  getByRiderId: async (id) => {
+    const response = await fetch(`${API_BASE_URL}/orders/rider/${id}`, { credentials: "include" });
     if (!response.ok) throw new Error("Failed to fetch order");
     return response.json();
   },
@@ -75,43 +121,6 @@ export const ordersAPI = {
   },
 };
 
-// Customers API
-export const customersAPI = {
-  getAll: async () => {
-    // TODO: Replace with actual API call
-    return new Promise((resolve) => {
-      setTimeout(() => resolve([...mockCustomers]), 300);
-    });
-  },
-
-  getById: async (id) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const customer = mockCustomers.find(c => c.id === id);
-        if (customer) resolve(customer);
-        else reject(new Error('Customer not found'));
-      }, 300);
-    });
-  },
-
- 
-
-  delete: async (id) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const index = mockCustomers.findIndex(c => c.id === id);
-        if (index !== -1) {
-          mockCustomers.splice(index, 1);
-          resolve();
-        } else {
-          reject(new Error('Customer not found'));
-        }
-      }, 300);
-    });
-  },
-};
-
-// Drivers API
 export const ridersAPI = {
   getAll: async () => {
     const response = await fetch(`${API_BASE_URL}/riders`, {
@@ -123,13 +132,9 @@ export const ridersAPI = {
   },
 
   getById: async (id) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const driver = mockDrivers.find(d => d.id === id);
-        if (driver) resolve(driver);
-        else reject(new Error('Driver not found'));
-      }, 300);
-    });
+    const response = await fetch(`${API_BASE_URL}/orders/rider/${id}`, { credentials: "include" });
+    if (!response.ok) throw new Error("Failed to fetch order");
+    return response.json();
   },
 
   create: async (data) => {
@@ -152,6 +157,16 @@ export const ridersAPI = {
     return res.json();
   },
 
+  updateStatus: async (id, status) => {
+    const res = await fetch(`${API_BASE_URL}/riders/${id}/updateStatus`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status }),
+    });
+    if (!res.ok) throw new Error("Failed to update rider");
+    return res.json();
+  },
+
   delete: async (id) => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -167,7 +182,6 @@ export const ridersAPI = {
   },
 };
 
-// Dashboard Stats API
 export const dashboardAPI = {
   getStats: async () => {
     const response = await fetch(`${API_BASE_URL}/dashboard/stats`, {

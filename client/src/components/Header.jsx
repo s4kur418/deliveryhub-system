@@ -1,11 +1,15 @@
 import { useState, useRef, useEffect } from "react";
-import { Search, Bell, User, LogOut, Package } from 'lucide-react';
-import { authAPI } from "../services/api";
+import { Search, Bell, User, LogOut, Package, ChevronDown } from 'lucide-react';
+import { authAPI, ridersAPI } from "../services/api";
 
-export function Header() {
+export function Header({ riderStatus, setRiderStatus }) {
   const [user, setUser] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+
+  const [statusOpen, setStatusOpen] = useState(false);
+  const statusRef = useRef(null);
+  
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -39,17 +43,28 @@ export function Header() {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch("/api/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-      const data = await res.json();
-      if (res.ok) {
+      const data = await authAPI.logout()
+      if (data) {
         console.log(data.message);
         window.location.href = "/";
       }
     } catch (err) {
       console.error("Logout failed", err);
+    }
+  };
+
+  const handleStatusChange = (newStatus) => {
+    setRiderStatus(newStatus);
+    setStatusOpen(false);
+
+    ridersAPI.updateStatus(user.id, newStatus)
+  };
+
+  const getStatusColor = () => {
+    switch (riderStatus) {
+      case "Online": return "bg-green-500";
+      case "On Delivery": return "bg-blue-500";
+      default: return "bg-gray-400";
     }
   };
 
@@ -75,6 +90,34 @@ export function Header() {
         </div> 
 
         <div className="flex items-center gap-4 ml-8">
+          {user?.role === "rider" && (
+            <div className="relative" ref={statusRef}>
+              <button
+                onClick={() => {
+                  if (riderStatus !== "On Delivery") {
+                    setStatusOpen(!statusOpen);
+                  }
+                }}
+                disabled={riderStatus === "On Delivery"}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm
+                  ${riderStatus === "On Delivery" 
+                    ? "bg-gray-200 text-gray-500 cursor-not-allowed" 
+                    : "bg-gray-100 hover:bg-gray-200"}`}
+              >
+                <span className={`w-2 h-2 rounded-full ${getStatusColor()}`}></span>
+                {riderStatus}
+                <ChevronDown className="w-4 h-4" />
+              </button>
+
+              {statusOpen && (
+                <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg border border-gray-100 rounded-lg p-2 z-50">
+                  <p className="px-2 py-1 hover:bg-gray-100 rounded" onClick={() => handleStatusChange("Online")}>Online</p>
+                  <p className="px-2 py-1 hover:bg-gray-100 rounded" onClick={() => handleStatusChange("Offline")}>Offline</p>
+                </div>
+              )}
+            </div>
+          )}
+
           <button className="relative p-2 text-gray-600 hover:bg-gray-50 rounded-lg">
             <Bell className="w-5 h-5" />
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>

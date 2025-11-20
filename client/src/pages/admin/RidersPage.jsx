@@ -60,8 +60,8 @@ export function RidersPage() {
 
   const getStatusColor = (status) => {
     const colors = {
-      available: 'bg-green-100 text-green-800 border-green-200',
-      busy: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+      online: 'bg-green-100 text-green-800 border-green-200',
+      on_delivery: 'bg-yellow-100 text-yellow-800 border-yellow-200',
       offline: 'bg-gray-100 text-gray-800 border-gray-200',
     };
     return colors[status];
@@ -177,20 +177,24 @@ export function RidersPage() {
         />
       )}
 
-      <AlertDialog
-        open={deleteRiderId !== null}
-        onOpenChange={() => setDeleteRiderId(null)}
-      >
-        <AlertDialogContent>
+      <AlertDialog open={deleteRiderId !== null} onOpenChange={() => setDeleteRiderId(null)}>
+        <AlertDialogContent className="max-w-md mx-auto rounded-xl bg-white shadow-lg border border-gray-200 p-6">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Rider</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this Rider? This action cannot be undone.
+            <AlertDialogTitle className="text-lg font-bold text-gray-800">
+              Delete Rider
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-600 mt-1">
+              This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+          <AlertDialogFooter className="mt-6 flex justify-end gap-3">
+            <AlertDialogCancel className="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 transition-all">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 transition-all"
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

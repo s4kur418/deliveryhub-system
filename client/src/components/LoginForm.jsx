@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Package, Mail, Lock } from "lucide-react";
 import setDocumentTitle from "../hooks/set-document-title";
 import { Link, useNavigate } from "react-router-dom";
+import { authAPI } from "../services/api";
 
 function LoginForm({ setUser }) {
     setDocumentTitle("Log In | Delivery Hub");
@@ -18,31 +19,24 @@ function LoginForm({ setUser }) {
         setValues({...values, [e.target.name]:e.target.value})
     }
 
-    // Existing handleLogin logic (unchanged)
     const handleLogin = async (e) => {
         e.preventDefault();
         setErrorMsg("");
 
-        try {
-            const res = await fetch("/api/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify(values),
-            });
+        const result = await authAPI.login(values);
 
-            const data = await res.json();
-            if (res.ok) {
-                setUser(data.user);
-                navigate(data.role === "admin" ? "/admin/dashboard" : "/dashboard");
-                console.log("Logged in:", data.user);
-            } else {
-                setErrorMsg(data.message);
-            }
-        } catch (error) {
-            console.error("Error:", error);
-            setErrorMsg("Something went wrong. Please check your connection.");
+        if (result.ok) {
+            const { user, role } = result.data;
+
+            setUser(user);
+            navigate(role === "admin" ? "/admin/dashboard" : 
+                    role === "rider" ? "/rider/dashboard" : 
+                    "/dashboard");
+            console.log("Logged in:", user);
+        } else {
+            setErrorMsg(result.data.message);
         }
+        
     };
 
     return ( 
@@ -97,7 +91,7 @@ function LoginForm({ setUser }) {
                         </div>
 
                         {/* Error Message */}
-                        {errorMsg && <p className="text-red-500 text-sm mt-1">{errorMsg}</p>}
+                        {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
                         
                         {/* Submit Button */}
                         <button 

@@ -17,39 +17,51 @@ export default function App() {
       if (data.loggedIn) setUser(data.user);
       setLoading(false);
     };
-
     loadSession();
   }, []);
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <BrowserRouter>
       <Routes>
-        {/* <Route path='/' element={<LoginForm setUser={setUser} />} />
-        <Route path='/admin/dashboard' element={<AdminDashboard />} />
-        <Route path='/dashboard' element={<UserDashboard />} />
-        <Route path='/rider/dashboard' element={<RiderDashboard />} /> */}
-        <Route path='/signup' element={user ? (
-            user.role === "admin" ? (
-              <Navigate to="/admin/dashboard" />
+        {/* SIGNUP */}
+        <Route
+          path="/signup"
+          element={
+            user ? (
+              user.role === "admin" ? (
+                <Navigate to="/admin/dashboard" />
+              ) : user.role === "rider" ? (
+                <Navigate to="/rider/dashboard" />
+              ) : (
+                <Navigate to="/dashboard" />
+              )
             ) : (
-              <Navigate to="/dashboard" />
+              <SignupForm />
             )
-          ) : (
-             <SignupForm />
-          )} />
-          
-        <Route 
-          path='/' element={user ? (
-            user.role === "admin" ? (
-              <Navigate to="/admin/dashboard" />
-            ) : (
-              <Navigate to="/dashboard" />
-            )
-          ) : (
-            <LoginForm setUser={setUser} />
-          )} 
+          }
         />
-          
+
+        {/* LOGIN PAGE */}
+        <Route
+          path="/"
+          element={
+            user ? (
+              user.role === "admin" ? (
+                <Navigate to="/admin/dashboard" />
+              ) : user.role === "rider" ? (
+                <Navigate to="/rider/dashboard" />
+              ) : (
+                <Navigate to="/dashboard" />
+              )
+            ) : (
+              <LoginForm setUser={setUser} />
+            )
+          }
+        />
+
+        {/* USER DASHBOARD */}
         <Route
           path="/dashboard"
           element={
@@ -60,11 +72,25 @@ export default function App() {
             )
           }
         />
+
+        {/* RIDER DASHBOARD */}
+        <Route
+          path="/rider/dashboard"
+          element={
+            user && user.role === "rider" ? (
+              <RiderDashboard />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+
+        {/* ADMIN DASHBOARD */}
         <Route
           path="/admin/dashboard"
           element={
             user && user.role === "admin" ? (
-              <AdminDashboard user={user}/>
+              <AdminDashboard user={user} />
             ) : (
               <Navigate to="/" />
             )
